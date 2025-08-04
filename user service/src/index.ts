@@ -6,12 +6,11 @@ import userRoutes from "./route.js"
 dotenv.config()
 connectDB();
 const app = express()
+app.use(express.json())
 const port = process.env.PORT || 3000
 
 
 app.use("/api/v1", userRoutes)
-
-
 
 
 
