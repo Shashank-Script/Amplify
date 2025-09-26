@@ -3,6 +3,7 @@ import tryCatch from "./errorHandling.js";
 import getBuffer from "./config/dataUri.js";
 import cloudinary from "cloudinary";
 import { db } from "./config/db.js";
+import { redisClient } from "./index.js";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -47,6 +48,11 @@ export const addAlbum = tryCatch(
       ).secure_url
     }) RETURNING *
     `;
+
+    if(redisClient.isReady){
+      await redisClient.del("albums")
+      console.log("cached deleted for albums");
+    }
 
     res.status(200).json({
       message: "Album added successfully",
@@ -94,6 +100,11 @@ export const addSong = tryCatch(
       ).secure_url
     },${album})`;
 
+    if(redisClient.isReady){
+      await redisClient.del("songs")
+      console.log("cached deleted for songs");
+    }
+
     res.status(200).json({
       message: "Song added successfully",
     });
@@ -132,6 +143,11 @@ export const addSongThumbnail = tryCatch(
       req.params.id
     } RETURNING *`;
 
+    if(redisClient.isReady){
+      await redisClient.del("songs")
+      console.log("cached deleted for songs");
+    }
+
     res.status(200).json({
       message: "Song thumbnail added successfully",
       song: result[0],
@@ -158,6 +174,16 @@ export const deleteAlbum = tryCatch(
 
     await db `DELETE FROM albums WHERE id=${id}`
 
+    if(redisClient.isReady){
+      await redisClient.del("albums")
+      console.log("cached deleted for albums");
+    }
+
+    if(redisClient.isReady){
+      await redisClient.del("songs")
+      console.log("cached deleted for songs");
+    }
+
     res.status(200).json({
       message: "Album deleted successfully",
     });
@@ -180,6 +206,11 @@ export const deleteSong = tryCatch(
     }
 
     await db `DELETE FROM songs WHERE id=${id}`
+
+    if(redisClient.isReady){
+      await redisClient.del("songs")
+      console.log("cached deleted for songs");
+    }
 
     res.status(200).json({
       message: "Song deleted successfully",
