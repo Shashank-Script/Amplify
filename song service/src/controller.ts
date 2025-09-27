@@ -51,7 +51,7 @@ export const getAllSongs = tryCatch(async (req, res) => {
     return;
   } else {
     console.log("from db");
-    songs = await db`SELECT * FROM albums`;
+    songs = await db`SELECT * FROM songs`;
 
     if (redisClient.isReady) {
       await redisClient.set("songs", JSON.stringify(songs), {
