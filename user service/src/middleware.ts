@@ -13,8 +13,12 @@ export const isAuth = async (
 ): Promise<void> => {
   try {
     const token = req.headers.token as string;
+
     if (!token) {
-      res.status(401).json({ message: "Unauthorized" });
+      res.status(403).json({
+        message: "Please Login",
+      });
+
       return;
     }
 
@@ -22,6 +26,7 @@ export const isAuth = async (
       token,
       process.env.JWT_SECRET_KEY as string
     ) as JwtPayload;
+    
     if (!decodedValue || !decodedValue._id) {
       res.status(401).json({ message: "Invalid token" });
       return;

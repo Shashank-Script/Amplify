@@ -14,17 +14,17 @@ import Prism from "@/components/Prism";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserData } from "@/context/UserContext";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const { btnLoading, loginUser } = useUserData();
-
-  const submitHandler = (e: any) => {
-    e.preventDefault();
-    loginUser(email, password, navigate);
-  };
-
+const SignUp = () => {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+    const { btnLoading, signUpUser } = useUserData();
+  
+    const submitHandler = (e: any) => {
+      e.preventDefault();
+      signUpUser(name, email, password, navigate);
+    };
   return (
     <div className="relative w-full h-screen flex items-center justify-center overflow-hidden">
       {/* Background Prism */}
@@ -46,15 +46,29 @@ const Login = () => {
       <Card className="w-[400px] bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
         <CardHeader>
           <CardTitle className="text-white text-center font-semibold">
-            Login to your account
+            Create an account
           </CardTitle>
           <CardDescription className="text-gray-200 text-center">
-            Enter your email below to login to your account
+            Enter your email below to create an account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={submitHandler}>
             <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label className="text-white" htmlFor="name">
+                  Name 
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                  placeholder="Enter name"
+                  className="bg-white/10 text-white placeholder:text-gray-300 border-white/20"
+                  required
+                />
+              </div>
               <div className="grid gap-2">
                 <Label className="text-white" htmlFor="email">
                   Email
@@ -70,17 +84,9 @@ const Login = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label className="text-white" htmlFor="password">
-                    Password
-                  </Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm text-blue-500 underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
+                <Label className="text-white" htmlFor="password">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
@@ -97,18 +103,18 @@ const Login = () => {
               disabled={btnLoading}
               className="w-full mt-4 cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
             >
-              {btnLoading ? "Please wait..." : "Login"}
+              {btnLoading ? "Please wait..." : "Sign Up"}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <p className="text-white text-center">
-            Don&apos;t have an account?{" "}
+            Already have an account?
             <Link
-              to="/signup"
+              to="/login"
               className="text-blue-500 underline-offset-4 hover:underline"
             >
-              Sign up
+              Login
             </Link>
           </p>
         </CardFooter>
@@ -117,4 +123,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

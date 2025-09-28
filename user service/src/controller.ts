@@ -69,3 +69,47 @@ export const getUserProfile = tryCatch(async (req:AuthenticatedRequest, res, nex
     user,
   });
 });
+
+export const addToPlaylist = tryCatch(
+  async (req: AuthenticatedRequest, res) => {
+    const userId = req.user?._id;
+
+    const songId = req.params.id;
+    if (!songId) {
+      res.status(401).json({
+        message: "Song id is required",
+      });
+      return;
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({
+        message: "NO user with this id",
+      });
+      return;
+    }
+
+    if (user?.playlist.includes(songId)) {
+      const index = user.playlist.indexOf(songId);
+
+      user.playlist.splice(index, 1);
+
+      await user.save();
+
+      res.json({
+        message: " Removed from playlist",
+      });
+      return;
+    }
+
+    user.playlist.push(songId);
+
+    await user.save();
+
+    res.json({
+      message: "Added to PlayList",
+    });
+  }
+);

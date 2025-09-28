@@ -8,7 +8,11 @@ const Sidebar = () => {
     <div className="w-[25%] h-full flex-col p-2 gap-2 text-white hidden lg:flex ">
       <div className="bg-[#121212] h-[15%] rounded flex flex-col justify-around">
         <div className="flex items-center justify-center gap-14 h-full">
-          <img src="/Amplify_logo2.jpeg" alt="" className="w-40 h-40 object-contain" />
+          <img
+            src="/Amplify_logo2.jpeg"
+            alt=""
+            className="w-40 h-40 object-contain"
+          />
           <img
             src="/home.png"
             alt=""
