@@ -2,7 +2,7 @@ import { useSongData } from "@/context/SongContext";
 import { useEffect, useRef, useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { GrChapterNext, GrChapterPrevious } from "react-icons/gr";
-
+import { Slider } from "@/components/ui/slider";
 const Player = () => {
   const {
     song,
@@ -53,16 +53,16 @@ const Player = () => {
     }
   };
 
-  const volumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value) / 100;
+  const volumeChange = (value: number[]) => {
+    const newVolume = value[0] / 100;
     setVolume(newVolume);
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
   };
 
-  const durationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTime = (parseFloat(e.target.value) / 100) * duration;
+  const durationChange = (value: number[]) => {
+    const newTime = (value[0] / 100) * duration;
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
     }
@@ -92,16 +92,20 @@ const Player = () => {
             {song.audio && (
               <audio ref={audioRef} src={song.audio} autoPlay={isPlaying} />
             )}
-            <div className="w-full items-center flex font-thin text-green-400">
-              <input
-                type="range"
-                min={"0"}
-                max={"100"}
-                className="progress-bar w-[120px] md:w-[300px]"
-                value={(progress / duration) * 100 || 0}
-                onChange={durationChange}
+
+            {/* Song Progress Slider */}
+            <div className="w-full flex items-center text-green-400">
+              <Slider
+                value={[(progress / duration) * 100 || 0]}
+                onValueChange={durationChange}
+                max={100}
+                step={1}
+                color="green"
+                className="w-[120px] md:w-[300px]"
               />
             </div>
+
+            {/* Player Controls */}
             <div className="flex justify-center items-center gap-4">
               <span className="cursor-pointer" onClick={prevSong}>
                 <GrChapterPrevious />
@@ -119,15 +123,16 @@ const Player = () => {
               </span>
             </div>
           </div>
+
+          {/* Volume Slider */}
           <div className="flex items-center">
-            <input
-              type="range"
+            <Slider
+              value={[volume * 100]}
+              onValueChange={volumeChange}
+              max={100}
+              step={1}
+              color="blue"
               className="w-16 md:w-32"
-              min={"0"}
-              max={"100"}
-              step={"0.01"}
-              value={volume * 100}
-              onChange={volumeChange}
             />
           </div>
         </div>

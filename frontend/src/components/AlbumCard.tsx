@@ -22,8 +22,8 @@ const AlbumCard: React.FC<AlbumCardProps> = ({ image, name, desc, id }) => {
         className="rounded-md w-[160px] h-[160px] object-cover"
       />
       <div className="mt-0">
-        <p className="font-bold text-white truncate">{name}</p>
-        <p className="text-slate-400 text-sm truncate">{desc}</p>
+        <p className="font-bold text-white">{name.slice(0, 12)}...</p>
+        <p className="text-slate-400 text-sm">{desc.slice(0, 18)}...</p>
       </div>
     </Card>
   );

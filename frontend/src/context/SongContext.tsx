@@ -41,6 +41,8 @@ interface SongContextType {
   albumSong: Song[];
   albumData: Album | null;
   fetchAlbumSongs: (id: string) => Promise<void>;
+  fetchSongs: () => Promise<void>;
+  fetchAlbums: () => Promise<void>;
 }
 
 interface AlbumResponse {
@@ -168,6 +170,8 @@ export const SongProvider: React.FC<SongProviderProps> = ({ children }) => {
         albumSong,
         albumData,
         fetchAlbumSongs,
+        fetchSongs,
+        fetchAlbums,
       }}
     >
       {children}
