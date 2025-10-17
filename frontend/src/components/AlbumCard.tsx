@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card,} from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
 interface AlbumCardProps {
@@ -21,9 +21,9 @@ const AlbumCard: React.FC<AlbumCardProps> = ({ image, name, desc, id }) => {
         alt={name}
         className="rounded-md w-[160px] h-[160px] object-cover"
       />
-      <div className="mt-0">
-        <p className="font-bold text-white">{name.slice(0, 12)}...</p>
-        <p className="text-slate-400 text-sm">{desc.slice(0, 18)}...</p>
+      <div className="mt-0 leading-tight">
+        <p className="font-bold text-white m-0 p-0">{name.slice(0, 12)}...</p>
+        <p className="text-slate-400 text-sm m-0 p-0">{desc.slice(0, 18)}...</p>
       </div>
     </Card>
   );

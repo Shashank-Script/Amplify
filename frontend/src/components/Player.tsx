@@ -76,63 +76,72 @@ const Player = () => {
   return (
     <div>
       {song && (
-        <div className="h-[10%] bg-black flex justify-between items-center text-white px-4">
-          <div className="lg:flex items-center gap-4">
+        <div className="h-[60px] bg-black flex justify-between items-center text-white px-4 border-t border-gray-800 fixed bottom-0 left-0 w-full z-40">
+          {/* Left Section: Song Info */}
+          <div className="flex items-center gap-3 w-[25%]">
             <img
               src={song.thumbnail ? song.thumbnail : "/download.jpeg"}
-              className="w-12"
               alt=""
+              className="w-14 h-14 object-cover rounded-md"
             />
-            <div className="hidden md:block">
-              <p>{song.title}</p>
-              <p>{song.description?.slice(0, 30)}...</p>
+            <div className="hidden md:block overflow-hidden">
+              <p className="text-sm font-semibold truncate w-[150px]">
+                {song.title}
+              </p>
+              <p className="text-xs text-gray-400 truncate w-[150px]">
+                {song.description?.slice(0, 30)}...
+              </p>
             </div>
           </div>
-          <div className="flex flex-col items-center gap-1 m-auto">
+
+          {/* Center Section: Controls */}
+          <div className="flex flex-col items-center justify-center w-[50%]">
             {song.audio && (
               <audio ref={audioRef} src={song.audio} autoPlay={isPlaying} />
             )}
 
-            {/* Song Progress Slider */}
-            <div className="w-full flex items-center text-green-400">
-              <Slider
-                value={[(progress / duration) * 100 || 0]}
-                onValueChange={durationChange}
-                max={100}
-                step={1}
-                color="green"
-                className="w-[120px] md:w-[300px]"
-              />
-            </div>
+            {/* Progress Slider */}
+            <Slider
+              value={[(progress / duration) * 100 || 0]}
+              onValueChange={durationChange}
+              max={100}
+              step={1}
+              className="w-[60%] mb-1"
+            />
 
-            {/* Player Controls */}
-            <div className="flex justify-center items-center gap-4">
-              <span className="cursor-pointer" onClick={prevSong}>
-                <GrChapterPrevious />
-              </span>
+            {/* Controls */}
+            <div className="flex justify-center items-center gap-5">
+              <button
+                className="text-gray-300 hover:text-white cursor-pointer transition"
+                onClick={prevSong}
+              >
+                <GrChapterPrevious size={20} />
+              </button>
 
               <button
-                className="bg-white text-black rounded-full p-2"
+                className="bg-white text-black rounded-full p-2 hover:scale-110 cursor-pointer transition"
                 onClick={handlePlayPause}
               >
                 {isPlaying ? <FaPause /> : <FaPlay />}
               </button>
 
-              <span className="cursor-pointer" onClick={nextSong}>
-                <GrChapterNext />
-              </span>
+              <button
+                className="text-gray-300 hover:text-white cursor-pointer transition"
+                onClick={nextSong}
+              >
+                <GrChapterNext size={20} />
+              </button>
             </div>
           </div>
 
-          {/* Volume Slider */}
-          <div className="flex items-center">
+          {/* Right Section: Volume */}
+          <div className="w-[25%] flex justify-end items-center">
             <Slider
               value={[volume * 100]}
               onValueChange={volumeChange}
               max={100}
               step={1}
-              color="blue"
-              className="w-16 md:w-32"
+              className="w-20 md:w-32"
             />
           </div>
         </div>

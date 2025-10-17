@@ -1,0 +1,50 @@
+
+services:
+  # === USER SERVICE ===
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./user-service/.env
+    restart: always
+
+  # === ADMIN SERVICE ===
+  admin-service:
+    build: ./admin-service
+    container_name: admin-service
+    ports:
+      - "7000:7000"
+    env_file:
+      - ./admin-service/.env
+    restart: always
+    depends_on:
+      - user-service
+
+  # === SONG SERVICE ===
+  song-service:
+    build: ./song-service
+    container_name: song-service
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./song-service/.env
+    restart: always
+    depends_on:
+      - user-service
+      - admin-service
+
+  # === FRONTEND ===
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:4173" 
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - user-service
+      - admin-service
+      - song-service
+    restart: always

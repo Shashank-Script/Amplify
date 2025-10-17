@@ -8,7 +8,7 @@ import React, {
   type ReactNode,
 } from "react";
 
-const server = "http://localhost:8000";
+const music = import.meta.env.VITE_SONG_SERVICE_URL;
 
 export interface Song {
   id: string;
@@ -73,7 +73,7 @@ export const SongProvider: React.FC<SongProviderProps> = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await axios.get<SongResponse>(
-        `${server}/api/v1/song/all`
+        `${music}/api/v1/song/all`
       );
       const Songs = data.songs;
       setSongs(Songs);
@@ -92,7 +92,7 @@ export const SongProvider: React.FC<SongProviderProps> = ({ children }) => {
     try {
       if (!selectedSong) return;
       const { data } = await axios.get<Song>(
-        `${server}/api/v1/song/${selectedSong}`
+        `${music}/api/v1/song/${selectedSong}`
       );
       setSong(data);
     } catch (error) {
@@ -122,7 +122,7 @@ export const SongProvider: React.FC<SongProviderProps> = ({ children }) => {
   const fetchAlbums = useCallback(async () => {
     try {
       const { data } = await axios.get<AlbumResponse>(
-        `${server}/api/v1/album/all`
+        `${music}/api/v1/album/all`
       );
       setAlbums(data.albums);
     } catch (error) {
@@ -137,7 +137,7 @@ export const SongProvider: React.FC<SongProviderProps> = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await axios.get<{ songs: Song[]; album: Album }>(
-        `${server}/api/v1/album/${id}`
+        `${music}/api/v1/album/${id}`
       );
 
       setAlbumData(data.album);

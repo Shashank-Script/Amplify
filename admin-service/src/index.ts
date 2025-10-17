@@ -62,6 +62,10 @@ async function initDB() {
   }
 }
 
+app.get("/",(req,res) => {
+    res.send("Server Running...")
+})
+
 app.use('/api/v1',adminRoutes)
 
 initDB().then(() => {

@@ -4,7 +4,7 @@ import { User } from "./model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const registerUser = tryCatch(async (req, res, next) => {
+export const registerUser = tryCatch(async (req, res) => {
   const { name, email, password } = req.body;
 
   let user = await User.findOne({ email });
@@ -35,7 +35,7 @@ export const registerUser = tryCatch(async (req, res, next) => {
   });
 });
 
-export const loginUser = tryCatch(async (req, res, next) => {
+export const loginUser = tryCatch(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -61,7 +61,7 @@ export const loginUser = tryCatch(async (req, res, next) => {
   });
 });
 
-export const getUserProfile = tryCatch(async (req:AuthenticatedRequest, res, next) => {
+export const getUserProfile = tryCatch(async (req:AuthenticatedRequest, res) => {
   const user = req.user
 
   res.status(200).json({

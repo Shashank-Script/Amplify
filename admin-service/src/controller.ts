@@ -13,7 +13,7 @@ interface AuthenticatedRequest extends Request {
 }
 
 export const addAlbum = tryCatch(
-  async (req: AuthenticatedRequest, res, next) => {
+  async (req: AuthenticatedRequest, res) => {
     if (req.user?.role !== "admin") {
       res.status(401).json({ message: "You are not an admin" });
       return;
@@ -49,8 +49,8 @@ export const addAlbum = tryCatch(
     }) RETURNING *
     `;
 
-    if(redisClient.isReady){
-      await redisClient.del("albums")
+    if (redisClient.isReady) {
+      await redisClient.del("albums");
       console.log("cached deleted for albums");
     }
 
@@ -61,8 +61,57 @@ export const addAlbum = tryCatch(
   }
 );
 
+export const updateAlbum = tryCatch(async (req: AuthenticatedRequest, res) => {
+  if (req.user?.role !== "admin") {
+    return res.status(401).json({ message: "You are not an admin" });
+  }
+
+  const { title, description } = req.body;
+  if (!title || !description) {
+    return res
+      .status(400)
+      .json({ message: "Title and description are required" });
+  }
+
+  let thumbnailUrl;
+  const file = req.file;
+
+  if (file) {
+    const fileBuffer = getBuffer(file);
+    if (!fileBuffer?.content) {
+      return res
+        .status(500)
+        .json({ message: "Failed to generate file buffer" });
+    }
+
+    const upload = await cloudinary.v2.uploader.upload(fileBuffer.content, {
+      folder: "albums",
+    });
+    thumbnailUrl = upload.secure_url;
+  }
+
+  const result = await db`
+    UPDATE albums 
+    SET 
+      title=${title},
+      description=${description}
+      ${thumbnailUrl ? db`, thumbnail=${thumbnailUrl}` : db``}
+    WHERE id=${req.params.id}
+    RETURNING *`;
+
+  if (redisClient.isReady) {
+    await redisClient.del("albums");
+    console.log("cache deleted for albums");
+  }
+
+  return res.status(200).json({
+    message: "Album updated successfully",
+    album: result[0],
+  });
+});
+
 export const addSong = tryCatch(
-  async (req: AuthenticatedRequest, res, next) => {
+  async (req: AuthenticatedRequest, res) => {
     if (req.user?.role !== "admin") {
       res.status(401).json({ message: "You are not an admin" });
       return;
@@ -100,8 +149,8 @@ export const addSong = tryCatch(
       ).secure_url
     },${album})`;
 
-    if(redisClient.isReady){
-      await redisClient.del("songs")
+    if (redisClient.isReady) {
+      await redisClient.del("songs");
       console.log("cached deleted for songs");
     }
 
@@ -111,8 +160,67 @@ export const addSong = tryCatch(
   }
 );
 
+export const updateSong = tryCatch(
+  async (req: AuthenticatedRequest, res) => {
+    if (req.user?.role !== "admin") {
+      res.status(401).json({ message: "You are not an admin" });
+      return;
+    }
+
+    const { title, description, album } = req.body;
+
+    // Check if album exists
+    const isAlbum = await db`SELECT * FROM albums WHERE id=${album}`;
+    if (isAlbum.length === 0) {
+      res.status(404).json({ message: "Album not found" });
+      return;
+    }
+
+    let audioUrl;
+    const file = req.file;
+
+    // Handle file upload if provided
+    if (file) {
+      const fileBuffer = getBuffer(file);
+      if (!fileBuffer?.content) {
+        return res
+          .status(500)
+          .json({ message: "Failed to generate file buffer" });
+      }
+
+      const upload = await cloudinary.v2.uploader.upload(fileBuffer.content, {
+        folder: "songs",
+        resource_type: "video", // audio files go here too
+      });
+
+      audioUrl = upload.secure_url;
+    }
+
+    // Update song details
+    const result = await db`
+      UPDATE songs 
+      SET 
+        title = ${title},
+        description = ${description},
+        album_id = ${album}
+        ${audioUrl ? db`, audio = ${audioUrl}` : db``}
+      WHERE id = ${req.params.id}
+      RETURNING *`;
+
+    if (redisClient.isReady) {
+      await redisClient.del("songs");
+      console.log("cache deleted for songs");
+    }
+
+    res.status(200).json({
+      message: "Song updated successfully",
+      song: result[0],
+    });
+  }
+);
+
 export const addSongThumbnail = tryCatch(
-  async (req: AuthenticatedRequest, res, next) => {
+  async (req: AuthenticatedRequest, res) => {
     if (req.user?.role !== "admin") {
       res.status(401).json({ message: "You are not an admin" });
       return;
@@ -143,8 +251,8 @@ export const addSongThumbnail = tryCatch(
       req.params.id
     } RETURNING *`;
 
-    if(redisClient.isReady){
-      await redisClient.del("songs")
+    if (redisClient.isReady) {
+      await redisClient.del("songs");
       console.log("cached deleted for songs");
     }
 
@@ -156,31 +264,31 @@ export const addSongThumbnail = tryCatch(
 );
 
 export const deleteAlbum = tryCatch(
-  async (req: AuthenticatedRequest, res, next) => {
+  async (req: AuthenticatedRequest, res) => {
     if (req.user?.role !== "admin") {
       res.status(401).json({ message: "You are not an admin" });
       return;
     }
 
-    const {id} = req.params
+    const { id } = req.params;
 
-    const isAlbum = await db `SELECT * FROM albums WHERE id=${id}`;
+    const isAlbum = await db`SELECT * FROM albums WHERE id=${id}`;
     if (isAlbum.length === 0) {
       res.status(404).json({ message: "Album not found" });
       return;
     }
 
-    await db `DELETE FROM songs WHERE album_id=${id}`
+    await db`DELETE FROM songs WHERE album_id=${id}`;
 
-    await db `DELETE FROM albums WHERE id=${id}`
+    await db`DELETE FROM albums WHERE id=${id}`;
 
-    if(redisClient.isReady){
-      await redisClient.del("albums")
+    if (redisClient.isReady) {
+      await redisClient.del("albums");
       console.log("cached deleted for albums");
     }
 
-    if(redisClient.isReady){
-      await redisClient.del("songs")
+    if (redisClient.isReady) {
+      await redisClient.del("songs");
       console.log("cached deleted for songs");
     }
 
@@ -188,27 +296,27 @@ export const deleteAlbum = tryCatch(
       message: "Album deleted successfully",
     });
   }
-)
+);
 
 export const deleteSong = tryCatch(
-  async (req: AuthenticatedRequest, res, next) => {
+  async (req: AuthenticatedRequest, res) => {
     if (req.user?.role !== "admin") {
       res.status(401).json({ message: "You are not an admin" });
       return;
     }
 
-    const {id} = req.params
+    const { id } = req.params;
 
-    const song = await db `SELECT * FROM songs WHERE id=${id}`
+    const song = await db`SELECT * FROM songs WHERE id=${id}`;
     if (song.length === 0) {
       res.status(404).json({ message: "Song not found" });
       return;
     }
 
-    await db `DELETE FROM songs WHERE id=${id}`
+    await db`DELETE FROM songs WHERE id=${id}`;
 
-    if(redisClient.isReady){
-      await redisClient.del("songs")
+    if (redisClient.isReady) {
+      await redisClient.del("songs");
       console.log("cached deleted for songs");
     }
 
@@ -216,4 +324,4 @@ export const deleteSong = tryCatch(
       message: "Song deleted successfully",
     });
   }
-)
+);

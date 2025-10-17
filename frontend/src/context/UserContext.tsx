@@ -9,7 +9,7 @@ import React, {
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 
-const server = "http://localhost:3000";
+const listener = import.meta.env.VITE_USER_SERVICE_URL;
 
 export interface User {
   _id: string;
@@ -59,7 +59,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   )  {
     setBtnLoading(true);
     try {
-      const { data } = await axios.post(`${server}/api/v1/user/register`, {
+      const { data } = await axios.post(`${listener}/api/v1/user/register`, {
         name,
         email,
         password,
@@ -84,7 +84,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   )  {
     setBtnLoading(true);
     try {
-      const { data } = await axios.post(`${server}/api/v1/user/login`, {
+      const { data } = await axios.post(`${listener}/api/v1/user/login`, {
         email,
         password,
       });
@@ -115,7 +115,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       if (!token) {
         console.log("token not found");
       }
-      const { data } = await axios.get(`${server}/api/v1/user/profile`, {
+      const { data } = await axios.get(`${listener}/api/v1/user/profile`, {
         headers: {
           token : token,
         },
@@ -132,7 +132,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   async function addToPlaylist(id: string) {
     try {
       const { data } = await axios.post(
-        `${server}/api/v1/song/${id}`,
+        `${listener}/api/v1/song/${id}`,
         {},
         {
           headers: {

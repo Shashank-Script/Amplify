@@ -24,6 +24,11 @@ const port = process.env.PORT;
 
 app.use(cors())
 app.use(express.json());
+
+app.get("/",(req,res) => {
+    res.send("Server Running...")
+})
+
 app.use("/api/v1", songRoutes);
 
 app.listen(port, () => {
