@@ -81,15 +81,15 @@ const Album = () => {
                           <b className="mr-4 text-[#a7a7a7]">{index + 1}</b>
                           <img
                             src={
-                              song.thumbnail ? song.thumbnail : "/download.jpeg"
+                              song.thumbnail ? song.thumbnail : "/download.jpg"
                             }
-                            className="inline w-10 mr-5 rounded-md object-cover"
+                            className="inline h-15 w-10 mr-5 rounded-md object-cover"
                             alt=""
                           />{" "}
-                          {song.title}
+                          {song.title.length > 15 ? song.title.slice(0, 15) + "..." : song.title}
                         </p>
                         <p className="text-[15px] hidden sm:block">
-                          {song.description.slice(0, 30)}...
+                          {song.description.length > 20 ? song.description.slice(0, 20) + "..." : song.description}
                         </p>
                         <p className="flex justify-center items-center gap-5">
                           {isAuth && (

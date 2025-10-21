@@ -22,8 +22,8 @@ const AlbumCard: React.FC<AlbumCardProps> = ({ image, name, desc, id }) => {
         className="rounded-md w-[160px] h-[160px] object-cover"
       />
       <div className="mt-0 leading-tight">
-        <p className="font-bold text-white m-0 p-0">{name.slice(0, 12)}...</p>
-        <p className="text-slate-400 text-sm m-0 p-0">{desc.slice(0, 18)}...</p>
+        <p className="font-bold text-white hover:underline m-0 p-0">{name.slice(0, 12)}...</p>
+        <p className="text-slate-400 text-sm hover:underline m-0 p-0">{desc.slice(0, 18)}...</p>
       </div>
     </Card>
   );

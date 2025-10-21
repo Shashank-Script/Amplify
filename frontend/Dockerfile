@@ -1,25 +1,30 @@
+# ---------- Stage 1: Build ----------
 FROM node:22-alpine3.21 AS builder
-
-WORKDIR /build
-
-COPY package*.json ./
-
-RUN npm ci 
-
-COPY . .
-
-RUN npm run build
-
-FROM node:22-alpine3.21 AS runner
 
 WORKDIR /app
 
-COPY --from=builder /build/package*.json ./
+COPY package*.json ./
+RUN npm ci
 
-RUN npm ci --omit=dev
+COPY . .
+RUN npm run build
 
-COPY --from=builder /build/dist ./dist
+# ---------- Stage 2: Serve with Nginx ----------
+FROM nginx:alpine
 
-EXPOSE 4173
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-CMD ["npm","run", "preview"]
+# SPA-friendly Nginx config (for React Router etc.)
+RUN echo 'server { \
+  listen 80; \
+  server_name _; \
+  root /usr/share/nginx/html; \
+  index index.html; \
+  location / { \
+    try_files $uri /index.html; \
+  } \
+}' > /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

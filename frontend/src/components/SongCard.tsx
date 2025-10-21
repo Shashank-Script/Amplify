@@ -59,8 +59,8 @@ const SongCard: React.FC<SongCardProps> = ({ image, name, desc, id }) => {
       </CardHeader>
 
       <CardContent className="p-0 mt-0 leading-tight">
-        <CardTitle className="font-bold text-white m-0 p-0">{name.slice(0, 20)}..</CardTitle>
-        <CardDescription className="text-slate-200 text-sm m-0 p-0">
+        <CardTitle className="font-bold text-white hover:underline m-0 p-0">{name.slice(0, 20)}..</CardTitle>
+        <CardDescription className="text-slate-200 hover:underline text-sm m-0 p-0">
           {desc.slice(0, 20)}...
         </CardDescription>
       </CardContent>

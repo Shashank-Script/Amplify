@@ -30,7 +30,7 @@ const PlayList = () => {
             ) : (
               <>
                 <div className="mt-10 flex gap-8 flex-col md:flex-row md:items-center">
-                  <img src={"/download.jpeg"} className="w-48 rounded" alt="" />
+                  <img src={"/download.jpg"} className="w-48 rounded" alt="" />
 
                   <div className="flex flex-col">
                     <p>PlayList</p>
@@ -63,22 +63,22 @@ const PlayList = () => {
                   myPlayList.map((song, index) => {
                     return (
                       <div
-                        className="grid grid-cols-3 sm:grid-cols-4 mt-10 mb-4 pl-2 text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer"
+                        className="grid grid-cols-3 items-center sm:grid-cols-4 mt-10 mb-4 pl-2 text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer"
                         key={index}
                       >
                         <p className="text-white">
                           <b className="mr-4 text-[#a7a7a7]">{index + 1}</b>
                           <img
                             src={
-                              song.thumbnail ? song.thumbnail : "/download.jpeg"
+                              song.thumbnail ? song.thumbnail : "/download.jpg"
                             }
-                            className="inline w-10 mr-5"
+                            className="inline h-15 w-10 mr-5 rounded-md object-cover"
                             alt=""
                           />{" "}
-                          {song.title}
+                          {song.title.length > 15 ? song.title.slice(0, 15) + "..." : song.title}
                         </p>
                         <p className="text-[15px] hidden sm:block">
-                          {song.description.slice(0, 30)}...
+                          {song.description.length > 20 ? song.description.slice(0, 20) + "..." : song.description}
                         </p>
                         <p className="flex justify-center items-center gap-5">
                           <button
